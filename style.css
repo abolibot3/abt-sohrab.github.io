@@ -1,0 +1,1673 @@
+/* === Reset & Base === */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --primary: #c9a227;
+  --primary-light: #e0b946;
+  --primary-dark: #a88518;
+  --bg: #faf9f6;
+  --bg-alt: #ffffff;
+  --bg-card: #ffffff;
+  --text: #1a1a1a;
+  --text-muted: #6b6b6b;
+  --border: #e8e4d8;
+  --shadow: 0 4px 20px rgba(0,0,0,0.06);
+  --shadow-lg: 0 20px 60px rgba(0,0,0,0.12);
+  --radius: 20px;
+  --radius-sm: 12px;
+  --transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+  --font: 'Vazirmatn', system-ui, sans-serif;
+}
+
+[data-theme="dark"] {
+  --bg: #0d0d10;
+  --bg-alt: #14141a;
+  --bg-card: #1a1a22;
+  --text: #f0f0f0;
+  --text-muted: #9a9aa5;
+  --border: #2a2a35;
+  --shadow: 0 4px 20px rgba(0,0,0,0.4);
+  --shadow-lg: 0 20px 60px rgba(0,0,0,0.6);
+}
+
+html { scroll-behavior: smooth; scroll-padding-top: 90px; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  overflow-x: hidden;
+  transition: background 0.4s, color 0.4s;
+}
+
+img { max-width: 100%; display: block; }
+a { text-decoration: none; color: inherit; }
+ul { list-style: none; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+
+.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+/* === Preloader === */
+.preloader {
+  position: fixed; inset: 0; z-index: 9999;
+  background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity 0.6s, visibility 0.6s;
+}
+.preloader.hidden { opacity: 0; visibility: hidden; }
+.preloader-logo { text-align: center; }
+.camera-icon { font-size: 3rem; display: block; animation: bounce 1s infinite alternate; }
+.preloader-logo p { font-size: 1.3rem; font-weight: 700; margin: 12px 0 20px; color: var(--primary); }
+.preloader-bar { width: 200px; height: 4px; background: var(--border); border-radius: 4px; overflow: hidden; margin: 0 auto; }
+.preloader-bar span {
+  display: block; height: 100%; width: 40%;
+  background: linear-gradient(90deg, var(--primary), var(--primary-light));
+  border-radius: 4px; animation: load 1.2s infinite ease-in-out;
+}
+@keyframes load { 0%{width:0;margin-right:0} 50%{width:100%;margin-right:0} 100%{width:0;margin-right:100%} }
+@keyframes bounce { to { transform: translateY(-10px); } }
+
+/* === Scroll Progress === */
+.scroll-progress {
+  position: fixed; top: 0; right: 0; height: 3px; width: 0;
+  background: linear-gradient(90deg, var(--primary), var(--primary-light), #ffd700);
+  z-index: 1000; transition: width 0.1s;
+}
+
+/* === Header === */
+.header {
+  position: fixed; top: 0; right: 0; left: 0; z-index: 900;
+  padding: 16px 0; transition: var(--transition);
+  backdrop-filter: blur(0px);
+}
+.header.scrolled {
+  background: rgba(250,249,246,0.85);
+  backdrop-filter: blur(20px);
+  padding: 10px 0;
+  box-shadow: var(--shadow);
+  border-bottom: 1px solid var(--border);
+}
+[data-theme="dark"] .header.scrolled { background: rgba(13,13,16,0.85); }
+
+.nav { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+
+.logo { display: flex; align-items: center; gap: 8px; font-size: 1.2rem; font-weight: 600; }
+.logo-icon { font-size: 1.6rem; }
+.logo strong { color: var(--primary); }
+
+.nav-menu { display: flex; gap: 30px; }
+.nav-link {
+  position: relative; font-weight: 500; font-size: 0.95rem;
+  transition: color 0.2s;
+}
+.nav-link::after {
+  content: ''; position: absolute; bottom: -4px; right: 0;
+  width: 0; height: 2px; background: var(--primary);
+  transition: width 0.3s;
+}
+.nav-link:hover, .nav-link.active { color: var(--primary); }
+.nav-link:hover::after, .nav-link.active::after { width: 100%; }
+
+.nav-actions { display: flex; align-items: center; gap: 12px; }
+
+.theme-toggle {
+  width: 42px; height: 42px; border-radius: 50%;
+  background: var(--bg-card); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem; position: relative; overflow: hidden;
+  transition: var(--transition);
+}
+.theme-toggle:hover { transform: rotate(20deg) scale(1.1); }
+.theme-toggle .sun, .theme-toggle .moon {
+  position: absolute; transition: transform 0.4s, opacity 0.4s;
+}
+.theme-toggle .moon { transform: translateY(30px); opacity: 0; }
+[data-theme="dark"] .theme-toggle .sun { transform: translateY(-30px); opacity: 0; }
+[data-theme="dark"] .theme-toggle .moon { transform: translateY(0); opacity: 1; }
+
+.hamburger { display: none; flex-direction: column; gap: 5px; width: 30px; }
+.hamburger span { height: 2.5px; background: var(--text); border-radius: 2px; transition: var(--transition); }
+.hamburger.active span:nth-child(1) { transform: rotate(45deg) translateY(7px); }
+.hamburger.active span:nth-child(2) { opacity: 0; }
+.hamburger.active span:nth-child(3) { transform: rotate(-45deg) translateY(-7px); }
+
+/* === Buttons === */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 12px 28px; border-radius: 50px; font-weight: 600; font-size: 0.95rem;
+  transition: var(--transition); white-space: nowrap;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: #fff; box-shadow: 0 8px 24px rgba(201,162,39,0.3);
+}
+.btn-primary:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(201,162,39,0.5); }
+.btn-outline {
+  border: 2px solid var(--primary); color: var(--primary); background: transparent;
+}
+.btn-outline:hover { background: var(--primary); color: #fff; transform: translateY(-3px); }
+.btn-lg { padding: 15px 36px; font-size: 1rem; }
+
+/* === Hero === */
+.hero {
+  position: relative; min-height: 100vh;
+  display: flex; align-items: center;
+  padding: 120px 0 80px; overflow: hidden;
+}
+.hero-bg { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
+.blob {
+  position: absolute; border-radius: 50%; filter: blur(80px);
+  opacity: 0.35; animation: float 20s infinite ease-in-out;
+}
+.blob-1 { width: 500px; height: 500px; background: var(--primary); top: -100px; right: -100px; }
+.blob-2 { width: 400px; height: 400px; background: #e0b946; bottom: -100px; left: -100px; animation-delay: -7s; }
+.blob-3 { width: 300px; height: 300px; background: #d4a017; top: 50%; left: 40%; animation-delay: -14s; }
+@keyframes float {
+  0%,100% { transform: translate(0,0) scale(1); }
+  33% { transform: translate(40px,-40px) scale(1.1); }
+  66% { transform: translate(-40px,40px) scale(0.95); }
+}
+
+.hero-content {
+  position: relative; z-index: 1;
+  display: grid; grid-template-columns: 1fr 1fr;
+  align-items: center; gap: 60px;
+}
+.badge {
+  display: inline-block; padding: 8px 18px; border-radius: 50px;
+  background: rgba(201,162,39,0.12); color: var(--primary-dark);
+  font-weight: 600; font-size: 0.85rem; margin-bottom: 24px;
+  border: 1px solid rgba(201,162,39,0.3);
+}
+[data-theme="dark"] .badge { color: var(--primary-light); }
+
+.hero-text h1 { font-size: clamp(2rem, 4.5vw, 3.5rem); line-height: 1.3; font-weight: 800; margin-bottom: 20px; }
+.gradient-text {
+  background: linear-gradient(135deg, var(--primary), var(--primary-light), #ffd700);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.hero-text p { color: var(--text-muted); font-size: 1.1rem; margin-bottom: 32px; max-width: 520px; }
+.hero-btns { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 48px; }
+
+.hero-stats { display: flex; gap: 40px; }
+.hero-stats div { display: flex; flex-direction: column; }
+.hero-stats strong { font-size: 1.8rem; font-weight: 800; color: var(--primary); }
+.hero-stats span { font-size: 0.85rem; color: var(--text-muted); }
+
+.hero-image-wrap { position: relative; }
+.hero-image-wrap img {
+  width: 100%; border-radius: var(--radius); box-shadow: var(--shadow-lg);
+  aspect-ratio: 4/5; object-fit: cover;
+}
+.floating-card {
+  position: absolute; background: var(--bg-card); padding: 14px 20px;
+  border-radius: var(--radius-sm); box-shadow: var(--shadow-lg);
+  display: flex; align-items: center; gap: 10px;
+  animation: floatCard 3s infinite ease-in-out;
+}
+.floating-card span { font-size: 1.5rem; }
+.floating-card div { display: flex; flex-direction: column; }
+.floating-card strong { font-size: 1rem; }
+.floating-card small { font-size: 0.75rem; color: var(--text-muted); }
+.card-1 { top: 30px; left: -30px; animation-delay: -1s; }
+.card-2 { bottom: 30px; right: -30px; animation-delay: -2s; }
+@keyframes floatCard { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+
+.scroll-down {
+  position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+  width: 30px; height: 50px; border: 2px solid var(--primary);
+  border-radius: 20px; display: flex; justify-content: center; padding-top: 8px;
+}
+.scroll-down span {
+  width: 6px; height: 6px; background: var(--primary); border-radius: 50%;
+  animation: scrollDown 1.5s infinite;
+}
+@keyframes scrollDown { 0%{transform:translateY(0);opacity:1} 100%{transform:translateY(20px);opacity:0} }
+
+/* === Animations === */
+.animate-in { opacity: 0; transform: translateY(30px); animation: fadeUp 0.8s forwards; }
+.delay-1 { animation-delay: 0.2s; }
+.delay-2 { animation-delay: 0.4s; }
+.delay-3 { animation-delay: 0.6s; }
+.delay-4 { animation-delay: 0.8s; }
+@keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+.reveal { opacity: 0; transform: translateY(50px); transition: opacity 0.8s, transform 0.8s; }
+.reveal.active { opacity: 1; transform: translateY(0); }
+
+/* === Sections === */
+.section { padding: 100px 0; }
+.section-header { text-align: center; max-width: 650px; margin: 0 auto 60px; }
+.section-tag {
+  display: inline-block; padding: 6px 18px; border-radius: 50px;
+  background: rgba(201,162,39,0.12); color: var(--primary-dark);
+  font-weight: 600; font-size: 0.85rem; margin-bottom: 16px;
+}
+[data-theme="dark"] .section-tag { color: var(--primary-light); }
+.section-title { font-size: clamp(1.6rem, 3.5vw, 2.5rem); font-weight: 800; margin-bottom: 16px; }
+.section-sub { color: var(--text-muted); font-size: 1.05rem; }
+
+/* === About === */
+.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+.about-images { position: relative; }
+.about-img-1 { border-radius: var(--radius); box-shadow: var(--shadow-lg); aspect-ratio: 4/5; object-fit: cover; width: 80%; }
+.about-img-2 {
+  position: absolute; bottom: -30px; left: 0; width: 55%;
+  border-radius: var(--radius); border: 6px solid var(--bg);
+  box-shadow: var(--shadow-lg); aspect-ratio: 1;
+}
+.about-badge {
+  position: absolute; top: 20px; left: 20px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: #fff; padding: 20px; border-radius: var(--radius-sm);
+  text-align: center; font-weight: 800; font-size: 1.6rem; line-height: 1.2;
+  box-shadow: var(--shadow-lg);
+}
+.about-badge small { font-size: 0.7rem; font-weight: 500; }
+.about-text h2 { margin-bottom: 20px; }
+.about-text p { color: var(--text-muted); margin-bottom: 16px; }
+.about-features { margin: 24px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.about-features li { font-size: 0.95rem; font-weight: 500; }
+
+/* === Services === */
+.services-section { background: var(--bg-alt); }
+.services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap: 28px; }
+.service-card {
+  background: var(--bg-card); padding: 36px 28px; border-radius: var(--radius);
+  border: 1px solid var(--border); transition: var(--transition); position: relative; overflow: hidden;
+}
+.service-card::before {
+  content: ''; position: absolute; top: 0; right: 0; width: 100%; height: 4px;
+  background: linear-gradient(90deg, var(--primary), var(--primary-light));
+  transform: scaleX(0); transform-origin: right; transition: transform 0.4s;
+}
+.service-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-lg); }
+.service-card:hover::before { transform: scaleX(1); }
+.service-icon {
+  width: 64px; height: 64px; border-radius: 16px;
+  background: rgba(201,162,39,0.12); display: flex; align-items: center; justify-content: center;
+  font-size: 2rem; margin-bottom: 20px; transition: var(--transition);
+}
+.service-card:hover .service-icon { transform: scale(1.1) rotate(6deg); }
+.service-card h3 { font-size: 1.25rem; margin-bottom: 10px; }
+.service-card p { color: var(--text-muted); font-size: 0.92rem; margin-bottom: 16px; }
+.service-link { color: var(--primary); font-weight: 600; font-size: 0.9rem; }
+
+/* === Portfolio === */
+.portfolio-filters { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-bottom: 40px; }
+.filter-btn {
+  padding: 10px 24px; border-radius: 50px; border: 1px solid var(--border);
+  background: var(--bg-card); color: var(--text); font-weight: 600; font-size: 0.9rem;
+  transition: var(--transition);
+}
+.filter-btn:hover { border-color: var(--primary); color: var(--primary); }
+.filter-btn.active {
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: #fff; border-color: transparent; box-shadow: 0 6px 20px rgba(201,162,39,0.35);
+}
+
+.portfolio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap: 20px; }
+.portfolio-item {
+  position: relative; border-radius: var(--radius-sm); overflow: hidden;
+  aspect-ratio: 4/5; cursor: pointer; transition: var(--transition);
+}
+.portfolio-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s; }
+.portfolio-item:hover img { transform: scale(1.1); }
+.portfolio-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.85), transparent 60%);
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 20px; opacity: 0; transition: opacity 0.35s; color: #fff;
+}
+.portfolio-item:hover .portfolio-overlay { opacity: 1; }
+.portfolio-overlay h4 { font-size: 1.1rem; margin-bottom: 4px; }
+.portfolio-overlay span { font-size: 0.85rem; opacity: 0.85; }
+.portfolio-item.hide { display: none; }
+
+/* === Stats === */
+.stats-section {
+  padding: 80px 0;
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+  color: #fff; position: relative; overflow: hidden;
+}
+.stats-section::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1), transparent 50%);
+}
+.stats-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr));
+  gap: 40px; text-align: center; position: relative;
+}
+.stat-item strong { font-size: 2.8rem; font-weight: 800; display: block; }
+.stat-item span { font-size: 1rem; opacity: 0.9; }
+
+/* === Team === */
+.team-section { background: var(--bg-alt); }
+.team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap: 30px; }
+.team-card {
+  background: var(--bg-card); border-radius: var(--radius); overflow: hidden;
+  text-align: center; padding-bottom: 24px; border: 1px solid var(--border);
+  transition: var(--transition);
+}
+.team-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-lg); }
+.team-card img { width: 100%; aspect-ratio: 1; object-fit: cover; }
+.team-card h3 { margin-top: 20px; font-size: 1.15rem; }
+.team-card p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 16px; }
+.team-socials { display: flex; justify-content: center; gap: 10px; }
+.team-socials a {
+  width: 38px; height: 38px; border-radius: 50%; background: rgba(201,162,39,0.12);
+  display: flex; align-items: center; justify-content: center; transition: var(--transition);
+}
+.team-socials a:hover { background: var(--primary); transform: scale(1.1); }
+
+/* === Testimonials === */
+.testimonials-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); gap: 28px; }
+.testimonial-card {
+  background: var(--bg-card); padding: 32px; border-radius: var(--radius);
+  border: 1px solid var(--border); position: relative; transition: var(--transition);
+}
+.testimonial-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+.quote {
+  font-size: 4rem; color: var(--primary); line-height: 1; opacity: 0.3;
+  position: absolute; top: 10px; right: 20px; font-family: serif;
+}
+.testimonial-card p { color: var(--text-muted); margin: 16px 0 24px; font-size: 0.95rem; }
+.testimonial-author { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.testimonial-author img { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; }
+.testimonial-author div { display: flex; flex-direction: column; }
+.testimonial-author strong { font-size: 0.95rem; }
+.testimonial-author span { font-size: 0.8rem; color: var(--text-muted); }
+.stars { font-size: 0.9rem; }
+
+/* === Contact === */
+.contact-section { background: var(--bg-alt); }
+.contact-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 60px; align-items: start; }
+.contact-list { margin-top: 30px; display: flex; flex-direction: column; gap: 20px; }
+.contact-list li { display: flex; gap: 16px; align-items: flex-start; }
+.contact-list span {
+  width: 48px; height: 48px; border-radius: 12px; flex-shrink: 0;
+  background: rgba(201,162,39,0.12); display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem;
+}
+.contact-list strong { display: block; margin-bottom: 2px; }
+.contact-list p { color: var(--text-muted); font-size: 0.92rem; }
+
+.contact-form {
+  background: var(--bg-card); padding: 36px; border-radius: var(--radius);
+  border: 1px solid var(--border); box-shadow: var(--shadow);
+}
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-group { margin-bottom: 18px; display: flex; flex-direction: column; }
+.form-group label { font-size: 0.9rem; font-weight: 600; margin-bottom: 6px; }
+.form-group input, .form-group select, .form-group textarea {
+  padding: 12px 16px; border-radius: var(--radius-sm); border: 1px solid var(--border);
+  background: var(--bg); color: var(--text); font-family: inherit; font-size: 0.95rem;
+  transition: var(--transition); resize: vertical;
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+  outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(201,162,39,0.15);
+}
+.contact-form .btn { width: 100%; }
+.form-message { margin-top: 16px; text-align: center; font-weight: 600; color: var(--primary); }
+
+/* === Footer === */
+.footer { background: var(--bg-alt); border-top: 1px solid var(--border); padding: 60px 0 0; }
+.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 40px; }
+.footer-logo { margin-bottom: 16px; }
+.footer-desc { color: var(--text-muted); font-size: 0.92rem; margin-bottom: 20px; }
+.footer-socials { display: flex; gap: 10px; }
+.footer-socials a {
+  width: 40px; height: 40px; border-radius: 50%; background: var(--bg-card);
+  border: 1px solid var(--border); display: flex; align-items: center; justify-content: center;
+  transition: var(--transition);
+}
+.footer-socials a:hover { background: var(--primary); transform: translateY(-3px); }
+.footer h4 { margin-bottom: 18px; font-size: 1.05rem; }
+.footer ul li { margin-bottom: 10px; }
+.footer ul a { color: var(--text-muted); font-size: 0.9rem; transition: color 0.2s; }
+.footer ul a:hover { color: var(--primary); }
+.newsletter-form { display: flex; gap: 8px; margin-top: 12px; }
+.newsletter-form input {
+  flex: 1; padding: 10px 14px; border-radius: 50px; border: 1px solid var(--border);
+  background: var(--bg); color: var(--text); font-family: inherit;
+}
+.newsletter-form button {
+  width: 42px; height: 42px; border-radius: 50%; background: var(--primary);
+  color: #fff; font-size: 1.1rem; transition: var(--transition);
+}
+.newsletter-form button:hover { transform: scale(1.1); }
+.footer-bottom {
+  border-top: 1px solid var(--border); margin-top: 50px; padding: 24px 0;
+  text-align: center; color: var(--text-muted); font-size: 0.88rem;
+}
+
+/* === Back to Top === */
+.back-to-top {
+  position: fixed; bottom: 30px; left: 30px; z-index: 800;
+  width: 50px; height: 50px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: #fff; font-size: 1.3rem; box-shadow: var(--shadow-lg);
+  opacity: 0; visibility: hidden; transform: translateY(20px);
+  transition: var(--transition);
+}
+.back-to-top.show { opacity: 1; visibility: visible; transform: translateY(0); }
+.back-to-top:hover { transform: translateY(-5px) scale(1.05); }
+
+/* === Modal === */
+.modal {
+  position: fixed; inset: 0; z-index: 2000;
+  background: rgba(0,0,0,0.92); backdrop-filter: blur(10px);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; visibility: hidden; transition: var(--transition);
+  padding: 30px;
+}
+.modal.show { opacity: 1; visibility: visible; }
+.modal img { max-width: 90%; max-height: 80vh; border-radius: var(--radius-sm); object-fit: contain; }
+.modal-close {
+  position: absolute; top: 24px; left: 24px; width: 44px; height: 44px;
+  border-radius: 50%; background: rgba(255,255,255,0.15); color: #fff;
+  font-size: 1.8rem; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: var(--transition);
+}
+.modal-close:hover { background: var(--primary); transform: rotate(90deg); }
+#modalCaption { position: absolute; bottom: 30px; color: #fff; font-size: 1rem; }
+
+/* === Responsive === */
+@media (max-width: 992px) {
+  .nav-menu {
+    position: fixed; top: 0; right: -100%; height: 100vh; width: 280px;
+    background: var(--bg-card); flex-direction: column; gap: 0;
+    padding: 100px 30px 30px; transition: right 0.4s ease;
+    box-shadow: var(--shadow-lg); z-index: -1;
+  }
+  .nav-menu.open { right: 0; }
+  .nav-menu li { width: 100%; border-bottom: 1px solid var(--border); }
+  .nav-link { display: block; padding: 16px 0; }
+  .hamburger { display: flex; }
+  .nav-cta { display: none; }
+
+  .hero-content, .about-grid, .contact-grid { grid-template-columns: 1fr; gap: 40px; }
+  .hero-visual { order: -1; }
+  .about-img-2 { left: auto; right: 0; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 600px) {
+  .hero-stats { gap: 24px; }
+  .hero-stats strong { font-size: 1.4rem; }
+  .floating-card { display: none; }
+  .form-row, .footer-grid { grid-template-columns: 1fr; }
+  .section { padding: 70px 0; }
+  .about-features { grid-template-columns: 1fr; }
+  .contact-form { padding: 24px; }
+  .hero-btns { flex-direction: column; }
+  .hero-btns .btn { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+/* ============================================================
+   ✨ CSS پیشرفته - افکت‌ها و انیمیشن‌های تکمیلی
+   ============================================================ */
+
+/* === 1. اسکرول‌بار سفارشی === */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-alt);
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--primary), var(--primary-light));
+  border-radius: 10px;
+  border: 2px solid var(--bg-alt);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-dark);
+}
+
+/* انتخاب متن سفارشی */
+::selection {
+  background: var(--primary);
+  color: #fff;
+}
+::-moz-selection {
+  background: var(--primary);
+  color: #fff;
+}
+
+/* === 2. افکت متن درخشان برای Hero === */
+.hero-text h1 {
+  text-shadow: 0 2px 20px rgba(201, 162, 39, 0.1);
+}
+
+.gradient-text {
+  position: relative;
+  background-size: 200% 200%;
+  animation: gradientShift 4s ease infinite;
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* === 3. افکت Ripple روی دکمه‌ها === */
+.btn {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at center, rgba(255,255,255,0.4) 0%, transparent 70%);
+  transform: scale(0);
+  opacity: 0;
+  transition: transform 0.6s, opacity 0.6s;
+  pointer-events: none;
+}
+
+.btn:active::after {
+  transform: scale(2.5);
+  opacity: 1;
+  transition: 0s;
+}
+
+/* افکت درخشش روی دکمه اصلی */
+.btn-primary {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+  transform: skewX(-25deg);
+  animation: shine 3s infinite;
+}
+
+@keyframes shine {
+  0% { right: -100%; }
+  50%, 100% { right: 120%; }
+}
+
+/* === 4. افکت کارت‌های خدمات - Glow Border === */
+.service-card {
+  position: relative;
+}
+
+.service-card::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, var(--primary), transparent, var(--primary-light));
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.4s;
+  filter: blur(12px);
+}
+
+.service-card:hover::after {
+  opacity: 0.6;
+}
+
+/* === 5. افکت Tilt/3D برای کارت تیم === */
+.team-card {
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+.team-card img {
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), filter 0.4s;
+}
+
+.team-card:hover img {
+  transform: scale(1.08) rotate(-1deg);
+  filter: brightness(1.05);
+}
+
+/* افکت گرادیان روی عکس تیم قبل از hover */
+.team-card {
+  position: relative;
+}
+
+.team-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  aspect-ratio: 1;
+  background: linear-gradient(to top, rgba(201,162,39,0.3), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.4s;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.team-card:hover::before {
+  opacity: 1;
+}
+
+/* === 6. افکت Hover پیشرفته نمونه کارها === */
+.portfolio-item {
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s;
+}
+
+.portfolio-item:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 25px 50px rgba(201, 162, 39, 0.3);
+  z-index: 2;
+}
+
+.portfolio-overlay {
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.portfolio-overlay h4 {
+  transform: translateY(10px);
+  opacity: 0;
+  transition: transform 0.4s 0.1s, opacity 0.4s 0.1s;
+}
+
+.portfolio-item:hover .portfolio-overlay h4 {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.portfolio-overlay span {
+  transform: translateY(10px);
+  opacity: 0;
+  transition: transform 0.4s 0.2s, opacity 0.4s 0.2s;
+}
+
+.portfolio-item:hover .portfolio-overlay span {
+  transform: translateY(0);
+  opacity: 0.85;
+}
+
+/* === 7. انیمیشن ورود کارت‌های نمونه کار === */
+.portfolio-item {
+  animation: fadeInScale 0.5s forwards;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* === 8. افکت لرزش ظریف در بادج Hero === */
+.badge {
+  animation: gentlePulse 3s ease-in-out infinite;
+}
+
+@keyframes gentlePulse {
+  0%, 100% { 
+    box-shadow: 0 0 0 0 rgba(201, 162, 39, 0.3);
+  }
+  50% { 
+    box-shadow: 0 0 0 12px rgba(201, 162, 39, 0);
+  }
+}
+
+/* === 9. افکت شناور کارت‌های Hero با عمق === */
+.hero-image-wrap img {
+  transition: transform 0.6s ease;
+}
+
+.hero-image-wrap:hover img {
+  transform: scale(1.03) rotate(1deg);
+}
+
+/* === 10. خط جداکننده گرادیان بین بخش‌ها === */
+.section + .section::before {
+  content: '';
+  display: block;
+  width: 100px;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--primary), transparent);
+  margin: 0 auto 80px;
+  border-radius: 3px;
+  position: relative;
+  top: -60px;
+}
+
+/* === 11. افکت متن بک‌گراند بزرگ (Watermark) === */
+.section {
+  position: relative;
+  overflow: hidden;
+}
+
+.section::after {
+  content: '';
+  position: absolute;
+  font-size: 15rem;
+  font-weight: 900;
+  color: var(--text);
+  opacity: 0.015;
+  pointer-events: none;
+  z-index: 0;
+  top: 50%;
+  right: 50%;
+  transform: translate(50%, -50%);
+  white-space: nowrap;
+}
+
+[data-theme="light"] .section::after {
+  opacity: 0.02;
+}
+
+/* === 12. افکت Floating Particles (ذرات) === */
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    radial-gradient(2px 2px at 20% 30%, rgba(201,162,39,0.3), transparent),
+    radial-gradient(2px 2px at 60% 70%, rgba(201,162,39,0.2), transparent),
+    radial-gradient(1px 1px at 50% 50%, rgba(201,162,39,0.4), transparent),
+    radial-gradient(1px 1px at 80% 10%, rgba(201,162,39,0.3), transparent),
+    radial-gradient(2px 2px at 90% 60%, rgba(201,162,39,0.2), transparent),
+    radial-gradient(1px 1px at 30% 80%, rgba(201,162,39,0.3), transparent);
+  background-size: 200% 200%;
+  animation: particlesFloat 20s linear infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes particlesFloat {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 100% 100%; }
+}
+
+/* === 13. افکت آیکون سرویس با Rotate & Scale === */
+.service-icon {
+  position: relative;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.service-card:hover .service-icon {
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  transform: scale(1.15) rotate(-10deg);
+  box-shadow: 0 10px 30px rgba(201, 162, 39, 0.4);
+}
+
+/* === 14. افکت موج روی Stats Section === */
+.stats-section::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: var(--bg);
+  clip-path: polygon(0 100%, 0 60%, 25% 40%, 50% 60%, 75% 40%, 100% 60%, 100% 100%);
+}
+
+/* === 15. افکت Glassmorphism روی Form === */
+.contact-form {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+[data-theme="dark"] .contact-form {
+  background: rgba(26, 26, 34, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* === 16. افکت Focus پیشرفته روی Input === */
+.form-group input,
+.form-group select,
+.form-group textarea {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(201, 162, 39, 0.15);
+}
+
+/* === 17. افکت تایپینگ برای عنوان (با CSS) === */
+.section-title {
+  position: relative;
+  display: inline-block;
+}
+
+.section-title::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary), var(--primary-light));
+  border-radius: 4px;
+  margin: 16px auto 0;
+  animation: expandWidth 1s ease-out;
+}
+
+@keyframes expandWidth {
+  from { width: 0; }
+  to { width: 60px; }
+}
+
+.section-header .section-title::after {
+  margin: 16px auto 0;
+}
+
+.about-text .section-title::after,
+.contact-info .section-title::after {
+  margin: 16px 0 0;
+}
+
+/* === 18. افکت Stars در نظرات === */
+.stars {
+  display: inline-block;
+  animation: starGlow 2s ease-in-out infinite;
+}
+
+@keyframes starGlow {
+  0%, 100% { 
+    filter: drop-shadow(0 0 2px rgba(255, 215, 0, 0.5));
+  }
+  50% { 
+    filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.9));
+  }
+}
+
+/* === 19. افکت Hover لینک‌های Footer === */
+.footer ul a {
+  position: relative;
+  padding-right: 0;
+  transition: padding-right 0.3s, color 0.3s;
+}
+
+.footer ul a::before {
+  content: '←';
+  position: absolute;
+  right: -20px;
+  opacity: 0;
+  transition: all 0.3s;
+  color: var(--primary);
+}
+
+.footer ul a:hover {
+  padding-right: 18px;
+  color: var(--primary);
+}
+
+.footer ul a:hover::before {
+  right: 0;
+  opacity: 1;
+}
+
+/* === 20. افکت Glow روی لوگو === */
+.logo-icon {
+  display: inline-block;
+  animation: logoGlow 3s ease-in-out infinite;
+}
+
+@keyframes logoGlow {
+  0%, 100% { 
+    filter: drop-shadow(0 0 4px rgba(201, 162, 39, 0.4));
+    transform: scale(1);
+  }
+  50% { 
+    filter: drop-shadow(0 0 12px rgba(201, 162, 39, 0.8));
+    transform: scale(1.05);
+  }
+}
+
+/* === 21. افکت Number Counter با Gradient === */
+.hero-stats strong,
+.stat-item strong {
+  background: linear-gradient(135deg, var(--primary), var(--primary-light), #ffd700);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: 200% 200%;
+  animation: gradientShift 3s ease infinite;
+}
+
+/* === 22. افکت Bounce برای Back to Top === */
+.back-to-top {
+  animation: bounceSlow 2s ease-in-out infinite;
+}
+
+@keyframes bounceSlow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.back-to-top:hover {
+  animation: none;
+  transform: translateY(-8px) scale(1.1) !important;
+}
+
+/* === 23. افکت Modal با Zoom === */
+.modal img {
+  animation: zoomIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes zoomIn {
+  from { 
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to { 
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* === 24. افکت خط زیر لینک‌های Nav با Animation === */
+.nav-link::after {
+  background: linear-gradient(90deg, var(--primary), var(--primary-light));
+  box-shadow: 0 0 8px rgba(201, 162, 39, 0.5);
+}
+
+/* === 25. افکت Shadow روی هدر هنگام Scroll === */
+.header.scrolled {
+  animation: headerShine 3s ease-in-out infinite;
+}
+
+@keyframes headerShine {
+  0%, 100% { 
+    box-shadow: var(--shadow);
+  }
+  50% { 
+    box-shadow: 0 8px 30px rgba(201, 162, 39, 0.15);
+  }
+}
+
+/* === 26. افکت Zoom Image در About === */
+.about-img-1,
+.about-img-2 {
+  transition: transform 0.5s, box-shadow 0.5s;
+}
+
+.about-images:hover .about-img-1 {
+  transform: rotate(-2deg) scale(1.02);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+}
+
+.about-images:hover .about-img-2 {
+  transform: rotate(2deg) scale(1.05);
+  box-shadow: 0 25px 50px rgba(201, 162, 39, 0.3);
+}
+
+/* === 27. افکت Quote Mark === */
+.quote {
+  animation: float 6s ease-in-out infinite;
+  transition: all 0.4s;
+}
+
+.testimonial-card:hover .quote {
+  color: var(--primary);
+  opacity: 0.6;
+  transform: scale(1.2) rotate(-10deg);
+}
+
+/* === 28. افکت Loading Shimmer برای تصاویر === */
+img {
+  background: linear-gradient(90deg, var(--bg-alt) 25%, var(--border) 50%, var(--bg-alt) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+img[src] {
+  animation: none;
+  background: none;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* === 29. افکت Tooltip ساده === */
+[data-tooltip] {
+  position: relative;
+  cursor: help;
+}
+
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 120%;
+  left: 50%;
+  transform: translateX(-50%) translateY(5px);
+  background: var(--text);
+  color: var(--bg);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s;
+  font-weight: 500;
+}
+
+[data-tooltip]:hover::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* === 30. افکت متن سایه‌دار سه‌بعدی === */
+.hero-text h1 {
+  text-shadow: 
+    0 1px 0 rgba(0,0,0,0.02),
+    0 2px 4px rgba(0,0,0,0.02),
+    0 4px 8px rgba(0,0,0,0.02);
+}
+
+/* === 31. افکت Card Reveal با Stagger === */
+.reveal.active {
+  animation: revealUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes revealUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* === 32. افکت Background Pattern برای Sections === */
+.services-section::before,
+.team-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    radial-gradient(circle at 1px 1px, var(--border) 1px, transparent 0);
+  background-size: 30px 30px;
+  opacity: 0.3;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.services-section .container,
+.team-section .container {
+  position: relative;
+  z-index: 1;
+}
+
+/* === 33. افکت Cursor سفارشی (اختیاری) === */
+@media (hover: hover) and (pointer: fine) {
+  .portfolio-item,
+  .btn,
+  .filter-btn,
+  .theme-toggle,
+  .nav-link {
+    cursor: pointer;
+  }
+}
+
+/* === 34. افکت زیرآب/موج روی هدر Hero === */
+.hero::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: var(--bg);
+  clip-path: polygon(0 100%, 0 80%, 15% 60%, 30% 80%, 45% 55%, 60% 80%, 75% 60%, 90% 80%, 100% 60%, 100% 100%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* === 35. افکت Hover پیشرفته Filter Buttons === */
+.filter-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.filter-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(201, 162, 39, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.5s, height 0.5s;
+}
+
+.filter-btn:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* === 36. افکت Text Underline Animation === */
+.service-link {
+  position: relative;
+  display: inline-block;
+}
+
+.service-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  right: 0;
+  width: 0;
+  height: 2px;
+  background: var(--primary);
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.service-card:hover .service-link::after {
+  width: 100%;
+}
+
+/* === 37. افکت Gradient Border روی Testimonial === */
+.testimonial-card {
+  position: relative;
+}
+
+.testimonial-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, transparent, var(--primary), transparent);
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s;
+  pointer-events: none;
+}
+
+.testimonial-card:hover::before {
+  opacity: 1;
+}
+
+/* === 38. افکت Preloader با چرخش === */
+.preloader-bar {
+  position: relative;
+  overflow: hidden;
+}
+
+.preloader-bar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+  animation: preloaderShine 1s infinite;
+}
+
+@keyframes preloaderShine {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100%); }
+}
+
+/* === 39. افکت Focus Visible برای دسترس‌پذیری === */
+*:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* === 40. افکت Text Selection در تیترها === */
+.section-title .gradient-text {
+  position: relative;
+  display: inline-block;
+}
+
+.section-title .gradient-text::after {
+  content: '';
+  position: absolute;
+  bottom: 8px;
+  left: 0;
+  right: 0;
+  height: 8px;
+  background: rgba(201, 162, 39, 0.15);
+  z-index: -1;
+  border-radius: 4px;
+  transition: height 0.3s;
+}
+
+.section-title:hover .gradient-text::after {
+  height: 14px;
+}
+
+/* === 41. افکت Pulse برای دکمه CTA در هدر === */
+.nav-cta {
+  animation: subtlePulse 2.5s ease-in-out infinite;
+}
+
+@keyframes subtlePulse {
+  0%, 100% {
+    box-shadow: 0 8px 24px rgba(201, 162, 39, 0.3);
+  }
+  50% {
+    box-shadow: 0 8px 32px rgba(201, 162, 39, 0.6);
+  }
+}
+
+/* === 42. افکت Zoom Background روی Hero === */
+.hero-bg {
+  animation: heroZoom 20s ease-in-out infinite alternate;
+}
+
+@keyframes heroZoom {
+  from { transform: scale(1); }
+  to { transform: scale(1.1); }
+}
+
+/* === 43. افکت Blur بعد از Scroll (اختیاری) === */
+.hero-content {
+  transition: filter 0.5s;
+}
+
+/* === 44. افکت Border Animation روی Newsletter === */
+.newsletter-form input {
+  transition: all 0.3s;
+}
+
+.newsletter-form input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.15);
+}
+
+/* === 45. افکت Wave Text Animation === */
+@keyframes waveText {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+/* === 46. افکت Glow روی Modal Close === */
+.modal-close {
+  position: relative;
+}
+
+.modal-close::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, var(--primary), var(--primary-light));
+  opacity: 0;
+  z-index: -1;
+  transition: opacity 0.3s;
+  filter: blur(8px);
+}
+
+.modal-close:hover::before {
+  opacity: 0.8;
+}
+
+/* === 47. افکت Image Overlay Gradient در Hero === */
+.hero-image-wrap::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, transparent 50%, rgba(201, 162, 39, 0.2));
+  z-index: 1;
+  pointer-events: none;
+  transition: opacity 0.4s;
+  opacity: 0;
+}
+
+.hero-image-wrap:hover::before {
+  opacity: 1;
+}
+
+/* === 48. افکت Number Badge Rotation === */
+.about-badge {
+  animation: badgeFloat 4s ease-in-out infinite;
+}
+
+@keyframes badgeFloat {
+  0%, 100% { 
+    transform: translateY(0) rotate(-3deg);
+  }
+  50% { 
+    transform: translateY(-8px) rotate(3deg);
+  }
+}
+
+/* === 49. افکت Grid Pattern در Hero === */
+.hero::before {
+  background-image: 
+    linear-gradient(rgba(201,162,39,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201,162,39,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* === 50. افکت Smooth Appearance در Modal Caption === */
+#modalCaption {
+  animation: captionFade 0.5s;
+  background: rgba(0,0,0,0.6);
+  padding: 10px 24px;
+  border-radius: 50px;
+  backdrop-filter: blur(10px);
+}
+
+@keyframes captionFade {
+  from { 
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================================
+   📱 Responsive Tweaks برای افکت‌های بالا
+   ============================================================ */
+
+@media (max-width: 992px) {
+  .section::after {
+    font-size: 8rem;
+  }
+  
+  .section + .section::before {
+    margin-bottom: 50px;
+  }
+  
+  .hero::before {
+    height: 50px;
+  }
+}
+
+@media (max-width: 600px) {
+  .section::after {
+    font-size: 5rem;
+  }
+  
+  .btn-primary::before {
+    display: none;
+  }
+  
+  .hero::after {
+    opacity: 0.5;
+  }
+  
+  .section-title::after {
+    width: 40px;
+  }
+  
+  .stats-section::after {
+    height: 30px;
+  }
+}
+
+/* ============================================================
+   ♿ Reduced Motion - احترام به تنظیمات کاربر
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .gradient-text,
+  .btn-primary::before,
+  .badge,
+  .logo-icon,
+  .hero-stats strong,
+  .stat-item strong,
+  .back-to-top,
+  .about-badge,
+  .nav-cta,
+  .hero-bg,
+  .quote,
+  .section-title::after,
+  .stars {
+    animation: none !important;
+  }
+  
+  .portfolio-item {
+    animation: none !important;
+  }
+  
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+/* ============================================================
+   🖼️ بخش نمونه کار - استایل‌های تکمیلی
+   ============================================================ */
+
+/* حالت خالی */
+.portfolio-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 80px 20px;
+  background: var(--bg-card);
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  transition: var(--transition);
+}
+
+.portfolio-empty:hover {
+  border-color: var(--primary);
+  background: rgba(201, 162, 39, 0.03);
+}
+
+.portfolio-empty span {
+  font-size: 4rem;
+  display: block;
+  margin-bottom: 16px;
+  animation: bounce 1s infinite alternate;
+}
+
+.portfolio-empty p {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.portfolio-empty small {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+/* ویدیو در کارت */
+.portfolio-item video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* بادج Play */
+.play-badge {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: rgba(201, 162, 39, 0.9);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  padding-right: 4px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  z-index: 2;
+  transition: var(--transition);
+  pointer-events: none;
+  animation: playPulse 2s ease-in-out infinite;
+}
+
+@keyframes playPulse {
+  0%, 100% { 
+    box-shadow: 0 8px 24px rgba(201, 162, 39, 0.5);
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% { 
+    box-shadow: 0 8px 40px rgba(201, 162, 39, 0.9);
+    transform: translate(-50%, -50%) scale(1.08);
+  }
+}
+
+.portfolio-item:hover .play-badge {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.8);
+}
+
+/* ویدیو در مودال */
+.modal video.modal-video {
+  max-width: 90%;
+  max-height: 80vh;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  animation: zoomIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  background: #000;
+}
+
+/* آیکون ویدیو در کارت نمونه کار (گوشه) */
+.portfolio-item[data-type="video"]::after {
+  content: '🎬';
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  z-index: 3;
+  transition: var(--transition);
+}
+
+.portfolio-item[data-type="video"]:hover::after {
+  opacity: 0;
+  transform: scale(0.5);
+}
+
+/* ریسپانسیو */
+@media (max-width: 600px) {
+  .play-badge {
+    width: 50px;
+    height: 50px;
+    font-size: 1.2rem;
+  }
+  
+  .portfolio-empty {
+    padding: 50px 15px;
+  }
+  
+  .portfolio-empty span {
+    font-size: 3rem;
+  }
+  
+  .modal video.modal-video {
+    max-width: 100%;
+  }
+}
+
+/* ============================================================
+   🔒 استایل فرم غیرفعال (نسخه نمایشی)
+   ============================================================ */
+
+.contact-form-wrap {
+  position: relative;
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+/* افکت تاری و بلور روی فرم */
+.disabled-form {
+  pointer-events: none;
+  opacity: 0.4;
+  filter: grayscale(60%) blur(2px);
+  transition: var(--transition);
+}
+
+/* پیام روی فرم */
+.form-overlay-message {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+  background: rgba(250, 249, 246, 0.7); /* پس‌زمینه نیمه‌شفاف تم روشن */
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+[data-theme="dark"] .form-overlay-message {
+  background: rgba(13, 13, 16, 0.7); /* پس‌زمینه تیره برای تم دارک */
+}
+
+.lock-icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+  animation: floatLock 3s ease-in-out infinite;
+}
+
+@keyframes floatLock {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.form-overlay-message h3 {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.form-overlay-message p {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  max-width: 300px;
+}
+
+/* غیرفعال کردن دکمه */
+.disabled-form button:disabled {
+  background: var(--border);
+  color: var(--text-muted);
+  box-shadow: none;
+  cursor: not-allowed;
+}
